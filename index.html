@@ -1,63 +1,115 @@
 <html>
-<head>
-	<title>SegComp RSA</title>
-	<meta charset="UTF-8">
-
-	<link rel="stylesheet" type="text/css"
-	  href="http://yegor256.github.io/tacit/tacit.min.css"/>
-	<link rel="stylesheet" type="text/css" href="animate.css" />
-	<script src="vue.js"></script>
-</head>
-<body>
-	<div id="app-RSA">
-		<h1>Criptossistema RSA</h1>
-	  <br/>
-	  <section v-if="step>=0">
-		  Escolha dois numeros primos P e Q para a geração de chaves.
-		  <form>
-			  <input type="number" v-model="p" />
-			  <input type="number" v-model="q" />
-		  </form>
-		  <div v-if="p">
-			  {{p}} - <span>{{isPrimo(p) ? "é primo" : "não é primo"}}</span>
-			</div>
-			<div v-if="q">
-				{{q}} - <span >{{isPrimo(q) ? "é primo" : "não é primo"}}</span>
-			</div>
-			<br/>
-			<button v-on:click="encontrarExpoente(phi, q, p)" :disabled='!isPrimo(p)||!isPrimo(q) '>Gerar chaves</button>
-	</section>
-
-	<section class="bounceIn" v-if="step > 0">
-			<div>PHI = (P-1)(Q-1) = {{(p-1)*(q-1)}}</div>
-			<div>N = P * Q = {{p*q}}</div>
-			<div> expoente coprimo E: {{expoente}}</div>
-			<div> chave privada: {{d}}</div>
-			<div>Sua chave pública são os valores de N e E: {{p * q}} {{expoente}}</div>
+  <head>
+    <title>SegComp RSA</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="http://yegor256.github.io/tacit/tacit.min.css"
+    />
+    <link rel="stylesheet" type="text/css" href="animate.css" />
+    <script src="vue.js"></script>
+  </head>
+  <body>
+    <div id="app-RSA">
+	  <h1>Criptossistema RSA</h1>
+	  
+      <br />
+      <div style="display: flex; justify-content: space-around;">
+        <div class="divisao">
+          <h2>geração de chaves</h2>
+          <section v-if="step>=0">
+            Escolha dois numeros primos P e Q para a geração de chaves.
+            <form>
+              <label for="p">P:</label>
+              <input name="p" type="number" v-model="p" />
+              <label for="q">Q:</label>
+              <input name="q" type="number" v-model="q" />
+            </form>
+            <div v-if="p">
+              {{p}} - <span>{{isPrimo(p) ? "é primo" : "não é primo"}}</span>
+            </div>
+            <div v-if="q">
+              {{q}} - <span>{{isPrimo(q) ? "é primo" : "não é primo"}}</span>
+            </div>
 			<br />
+			<div style="text-align: center">
+				<button
+				v-on:click="encontrarExpoente(phi, q, p)"
+				:disabled="!isPrimo(p)||!isPrimo(q) "
+				>
+				Gerar chaves
+            </button>
+		</div>
+          </section>
 
-			<form>
-				<input type="text" v-model="message" />
-				{{message.charCodeAt(0)}}
-				{{String.fromCharCode(Math.pow(message.charCodeAt(0),expoente) % (p*q))}}
-				{{Math.pow(message.charCodeAt(0),expoente) % (p*q)}}
-			</form>
+          <section class="fadeIn" v-if="step > 0">
+            <div>PHI = (P-1)(Q-1) = {{(p-1)*(q-1)}}</div>
+            <div>N = P * Q = {{p*q}}</div>
+            <div>expoente coprimo E: {{expoente}}</div>
+            <div>chave privada: {{d}}</div>
+            <br />
+            <div>
+              Sua chave <strong>pública</strong> são os valores de N e E:
+              <strong>{{p * q}} {{expoente}} </strong>
+            </div>
+            <div>
+              Sua chave <strong>privada</strong> são os valores de N e D:
+              <strong>{{p * q}} {{d}} </strong>
+            </div>
+          </section>
+        </div>
+        <div class="divisao">
+          <h2>Encriptografar</h2>
+          <form>
+            Insira os dados de sua chave pública:
+            <br />
 
-			<form>
-				<input type="text" v-model="message2" />
-				{{message2.charCodeAt(0)}}
-				{{String.fromCharCode(fastModularExponentiation(message2.charCodeAt(0), d, p*q))}}
-				{{fastModularExponentiation(message2.charCodeAt(0), d, p*q)}}
-			</form>
+            <label for="n2">N:</label>
 
-			
-	</section>
+            <input name="n2" type="number" v-model="encryptN" />
+            <label for="e">E:</label>
+            <input name="e" type="number" v-model="encryptE" />
+            <br />
+            Entre com a mensagem a ser criptografada:
+            <input
+              type="textarea"
+              style="border: 1px solid black; width: 100%"
+              v-model="encryptMessage"
+            />
+            <div style="word-break: break-all;">
+              <strong v-if="encryptMessage">{{encrypt(encryptMessage)}}</strong>
+            </div>
+          </form>
+        </div>
+        <div class="divisao">
+          <h2>Decriptografar</h2>
+          Insira os dados de sua chave privada:
+          <br />
+
+          <label for="n1">N:</label>
+
+          <input name="n1" type="number" v-model="decryptN" />
+          <label for="d">D:</label>
+
+          <input type="number" v-model="decryptD" />
+          <br />
+          Entre com a mensagem a ser descriptografada:
+          <input
+            type="textarea"
+            style="border: 1px solid black; width: 100%"
+            v-model="decryptMessage"
+          />
+          <div style="word-break: break-all;">
+            <strong v-if="decryptMessage">{{decrypt(decryptMessage)}}</strong>
+          </div>
+        </div>
+      </div>
 	</div>
+	<div style="margin-top: 40px"><i>Andrey Emmanuel Matrosov Mazépas - 16/0112362</i></div>
+	<div><i>Vitor Moraes Dellamora - 16/0056802</i></div>
 
-
-
-
-	<script src="index.js"></script>
-</body>
-
+    <script src="index.js"></script>
+  </body>
 </html>

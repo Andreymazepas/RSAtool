@@ -33,8 +33,27 @@ var appRSA = new Vue({
     expoente: null,
     step: 0,
     d: null,
+    encryptN: null,
+    encryptE: null,
+    encryptMessage: null,
+    decryptN: null,
+    decryptD: null,
+    decryptMessage: null,
   },
+  watch: {
+    'p': function(val, preVal){
+        this.step= 0;    
+  },
+  'q': function(val, preVal){
+    this.step= 0;    
+}},
   methods: {
+    resetar: () => {
+      if(appRSA.step > 0){
+        appRSA.step = 0;
+        console.log('reset');
+      }
+    },
     isPrimo: num => {
       for(let i = 2, s = Math.sqrt(num); i <= s; i++)
           if(num % i === 0) return false; 
@@ -73,7 +92,21 @@ var appRSA = new Vue({
         x = x % n;
       }
       return result;
-    }
+    },
+    encrypt: (message) => {
+      let result = '';
+      message.split('').forEach(letter => {
+          result = result +  String.fromCharCode(Math.pow(letter.charCodeAt(0),appRSA.encryptE) % appRSA.encryptN)
+      })
+      return result;
+  },
+  decrypt: (message) => {
+    let result = '';
+    message.split('').forEach(letter => {
+      result = result +  String.fromCharCode(fastModularExponentiation(letter.charCodeAt(0), appRSA.decryptD, appRSA.decryptN))
+  })
+  return result;
+  }
   }
 })
 

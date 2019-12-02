@@ -1,0 +1,31 @@
+.divisao {
+    width: 30%;
+    border: 2px solid black;
+    border-radius: 10px;
+    padding: 10px;
+    height: 70vh;
+}
+
+h2, h1 {
+    text-align: center;
+    margin-top: 30px!important;
+    margin-bottom: 30px!important;
+}
+
+button {
+    border: 1px solid black;
+    background: white!important;
+    text-align: center;
+}
+
+
+::-moz-selection { /* Code for Firefox */
+    color: white;
+    background: black;
+  }
+  
+  ::selection {
+    color: white;
+    background: black;
+
+  }
