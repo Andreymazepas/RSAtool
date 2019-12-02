@@ -38,12 +38,16 @@
 
 			<form>
 				<input type="text" v-model="message" />
+				{{message.charCodeAt(0)}}
 				{{String.fromCharCode(Math.pow(message.charCodeAt(0),expoente) % (p*q))}}
+				{{Math.pow(message.charCodeAt(0),expoente) % (p*q)}}
 			</form>
 
 			<form>
 				<input type="text" v-model="message2" />
-				{{String.fromCharCode(Math.pow(message2.charCodeAt(0), d) % (p*q))}}
+				{{message2.charCodeAt(0)}}
+				{{String.fromCharCode(fastModularExponentiation(message2.charCodeAt(0), d, p*q))}}
+				{{fastModularExponentiation(message2.charCodeAt(0), d, p*q)}}
 			</form>
 
 			

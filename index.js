@@ -54,6 +54,25 @@ var appRSA = new Vue({
       appRSA.d = extend(e, phi);
       appRSA.step = 1;
       return;
+    },
+    fastModularExponentiation: (a, b, n) => {
+      a = a % n;
+      let result = 1;
+      let x = a;
+    
+      while(b > 0){
+        let leastSignificantBit = b % 2;
+        b = Math.floor(b / 2);
+    
+        if (leastSignificantBit == 1) {
+          result = result * x;
+          result = result % n;
+        }
+    
+        x = x * x;
+        x = x % n;
+      }
+      return result;
     }
   }
 })
@@ -95,3 +114,22 @@ function extend(E,PHI) {
   }    
 
 
+  const fastModularExponentiation = (a, b, n) => {
+    a = a % n;
+    var result = 1;
+    var x = a;
+  
+    while(b > 0){
+      var leastSignificantBit = b % 2;
+      b = Math.floor(b / 2);
+  
+      if (leastSignificantBit == 1) {
+        result = result * x;
+        result = result % n;
+      }
+  
+      x = x * x;
+      x = x % n;
+    }
+    return result;
+  };
