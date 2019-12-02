@@ -1,36 +1,53 @@
 <html>
 <head>
 	<title>SegComp RSA</title>
-	
+	<meta charset="UTF-8">
+
 	<link rel="stylesheet" type="text/css"
-      href="http://yegor256.github.io/tacit/tacit.min.css"/>
+	  href="http://yegor256.github.io/tacit/tacit.min.css"/>
+	<link rel="stylesheet" type="text/css" href="animate.css" />
 	<script src="vue.js"></script>
 </head>
 <body>
-
-	<h1>Bondia</h1>
-	<p>Teste inicial pra ver se o CSS tá funcionando.</p>
-	<p>É isso.</p>
 	<div id="app-RSA">
-		<h2>Criptossistema RSA</h2>
-	  <p>{{ message }}</p>
-	  <input v-model="message">
-	  <input v-model="chave">
+		<h1>Criptossistema RSA</h1>
 	  <br/>
-	  <input type="number" v-model="p" />
-	  <input type="number" v-model="q" />
-	  <div>
+	  <section v-if="step>=0">
+		  Escolha dois numeros primos P e Q para a geração de chaves.
+		  <form>
+			  <input type="number" v-model="p" />
+			  <input type="number" v-model="q" />
+		  </form>
+		  <div v-if="p">
+			  {{p}} - <span>{{isPrimo(p) ? "é primo" : "não é primo"}}</span>
+			</div>
+			<div v-if="q">
+				{{q}} - <span >{{isPrimo(q) ? "é primo" : "não é primo"}}</span>
+			</div>
+			<br/>
+			<button v-on:click="encontrarExpoente(phi, q, p)" :disabled='!isPrimo(p)||!isPrimo(q) '>Gerar chaves</button>
+	</section>
 
-		  {{p}} - <span v-if="p">{{isPrimo(p)} ? "é primo" : "não é primo"}</span>
-		</div>
-		<div>
+	<section class="bounceIn" v-if="step > 0">
+			<div>PHI = (P-1)(Q-1) = {{(p-1)*(q-1)}}</div>
+			<div>N = P * Q = {{p*q}}</div>
+			<div> expoente coprimo E: {{expoente}}</div>
+			<div> chave privada: {{d}}</div>
+			<div>Sua chave pública são os valores de N e E: {{p * q}} {{expoente}}</div>
+			<br />
 
-				{{q}} - <span v-if="q">{{isPrimo(q) ? "é primo" : "não é primo"}}</span>
-			  </div>
-		<div >PHI = (P-1)(Q-1) = {{(p-1)*(q-1)}}</div>
-		<div> expoente coprimo: {{encontrarExpoente(phi, q, p)}}</div>
-	  <button v-on:click="encryptMessage">Encriptar</button>
-	  <p>{{ codigo }} // {{ decriptado }}</p>
+			<form>
+				<input type="text" v-model="message" />
+				{{String.fromCharCode(Math.pow(message.charCodeAt(0),expoente) % (p*q))}}
+			</form>
+
+			<form>
+				<input type="text" v-model="message2" />
+				{{String.fromCharCode(Math.pow(message2.charCodeAt(0), d) % (p*q))}}
+			</form>
+
+			
+	</section>
 	</div>
 
 
