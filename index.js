@@ -63,11 +63,12 @@ var appRSA = new Vue({
     encontrarExpoente: (phi, p, q) => {
       let gcd = 0;
       let e = 2;
+      let gcd2 = 0;
       phi = (p-1)*(q-1);
       while(gcd != 1) {
         e = e + 1
         gcd = GCD(e, phi);
-        phi = (p-1)*(q-1);
+        //gcd2 = GCD(e, p*q)
       }
       appRSA.expoente = e;
       appRSA.d = extend(e, phi);
@@ -94,16 +95,17 @@ var appRSA = new Vue({
       return result;
     },
     encrypt: (message) => {
-      let result = '';
+      let result = [];
       message.split('').forEach(letter => {
-          result = result +  String.fromCharCode(Math.pow(letter.charCodeAt(0),appRSA.encryptE) % appRSA.encryptN)
+          result.push(fastModularExponentiation(letter.charCodeAt(0),appRSA.encryptE, appRSA.encryptN))
       })
       return result;
   },
   decrypt: (message) => {
     let result = '';
-    message.split('').forEach(letter => {
-      result = result +  String.fromCharCode(fastModularExponentiation(letter.charCodeAt(0), appRSA.decryptD, appRSA.decryptN))
+    message = JSON.parse(message)
+    message.forEach(letter => {
+      result = result +  String.fromCharCode(fastModularExponentiation(letter, appRSA.decryptD, appRSA.decryptN))
   })
   return result;
   }
@@ -150,8 +152,7 @@ function extend(E,PHI) {
   const fastModularExponentiation = (a, b, n) => {
     a = a % n;
     var result = 1;
-    var x = a;
-  
+    var x = a;  
     while(b > 0){
       var leastSignificantBit = b % 2;
       b = Math.floor(b / 2);
