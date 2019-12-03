@@ -62,11 +62,10 @@ var appRSA = new Vue({
     
     encontrarExpoente: (phi, p, q) => {
       let gcd = 0;
-      let e = 2;
-      let gcd2 = 0;
+      let e = phi/2;
       phi = (p-1)*(q-1);
       while(gcd != 1) {
-        e = e + 1
+        e = phi/2 + Math.floor(Math.random()*phi/2)
         gcd = GCD(e, phi);
         //gcd2 = GCD(e, p*q)
       }
